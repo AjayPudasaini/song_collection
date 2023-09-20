@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=song_collection
+POSTGRES_USER=sLNBILcTELXTxyqmcaxVMrINrdVMeCsm
+POSTGRES_PASSWORD=HU9uuTaNVh4yjVbLbihTGFgHRVmjt7LIq4RqSrc5bHcAkwLiUz3zpHRDMAqJNY0H
