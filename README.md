@@ -2,9 +2,10 @@
 
 A Simple Admin panel to manage records of artists with their songs collection
 
-# To run this project local environment follow these steps:
  ## Requirements
     - Docker
+
+# To run this project local environment follow these steps:
 
     - sudo docker compose -f local.yml up --build
 
