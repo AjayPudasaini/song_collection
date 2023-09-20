@@ -13,7 +13,6 @@ services:
     container_name: song_collection_local_django
     depends_on:
       - postgres
-      - redis
     volumes:
       - .:/app:z
     env_file:
@@ -35,50 +34,50 @@ services:
     env_file:
       - ./.envs/.local/.postgres
 
-  docs:
-    image: song_collection_local_docs
-    container_name: song_collection_local_docs
-    build:
-      context: .
-      dockerfile: ./compose/local/docs/Dockerfile
-    env_file:
-      - ./.envs/.local/.django
-    volumes:
-      - ./docs:/docs:z
-      - ./config:/app/config:z
-      - ./song_collection:/app/song_collection:z
-    ports:
-      - '9000:9000'
-    command: /start-docs
+  # docs:
+  #   image: song_collection_local_docs
+  #   container_name: song_collection_local_docs
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/local/docs/Dockerfile
+  #   env_file:
+  #     - ./.envs/.local/.django
+  #   volumes:
+  #     - ./docs:/docs:z
+  #     - ./config:/app/config:z
+  #     - ./song_collection:/app/song_collection:z
+  #   ports:
+  #     - '9000:9000'
+  #   command: /start-docs
 
-  redis:
-    image: redis:6
-    container_name: song_collection_local_redis
+  # redis:
+  #   image: redis:6
+  #   container_name: song_collection_local_redis
 
-  celeryworker:
-    <<: *django
-    image: song_collection_local_celeryworker
-    container_name: song_collection_local_celeryworker
-    depends_on:
-      - redis
-      - postgres
-    ports: []
-    command: /start-celeryworker
+  # celeryworker:
+  #   <<: *django
+  #   image: song_collection_local_celeryworker
+  #   container_name: song_collection_local_celeryworker
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   ports: []
+  #   command: /start-celeryworker
 
-  celerybeat:
-    <<: *django
-    image: song_collection_local_celerybeat
-    container_name: song_collection_local_celerybeat
-    depends_on:
-      - redis
-      - postgres
-    ports: []
-    command: /start-celerybeat
+  # celerybeat:
+  #   <<: *django
+  #   image: song_collection_local_celerybeat
+  #   container_name: song_collection_local_celerybeat
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   ports: []
+  #   command: /start-celerybeat
 
-  flower:
-    <<: *django
-    image: song_collection_local_flower
-    container_name: song_collection_local_flower
-    ports:
-      - '5555:5555'
-    command: /start-flower
+  # flower:
+  #   <<: *django
+  #   image: song_collection_local_flower
+  #   container_name: song_collection_local_flower
+  #   ports:
+  #     - '5555:5555'
+  #   command: /start-flower
