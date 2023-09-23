@@ -73,6 +73,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
+    "bootstrap_datepicker_plus",
     "django_celery_beat",
     "rest_framework",
     "corsheaders",
@@ -81,7 +82,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "song_collection.users",
-    # Your stuff: custom apps go here
+    "song_collection.dashboard",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
