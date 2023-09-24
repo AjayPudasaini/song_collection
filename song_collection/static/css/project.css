@@ -1,4 +1,8 @@
-/* These styles are generated from project.scss. */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&family=Rubik+Microbe&display=swap');
+
+body{
+  font-family: 'Open Sans', sans-serif;
+}
 
 .alert-debug {
   color: black;
@@ -10,4 +14,50 @@
   color: #b94a48;
   background-color: #f2dede;
   border-color: #eed3d7;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.side_nav ul .nav-item .nav-link {
+  font-size: 18px;
+  color: rgb(68, 67, 67);
+}
+
+.active{
+  color: rgb(224, 221, 224);
+  background-color: rgb(67, 17, 114);
+  padding:9px;
+  border-radius: 5px;
+}
+
+/* .side_nav ul .nav-item .nav-link.active,
+.side_nav ul .nav-item .nav-link:active {
+  background-color: #5f4bb9;
+  color: #eed3d7;
+}
+
+.side_nav ul .nav-item .nav-link.active .item_link,
+.side_nav ul .nav-item .nav-link:active .item_link {
+  padding: 70px;
+  width: 100%x;
+} */
+
+.dashboard_wrap{
+  background-color: rgb(227, 227, 230);
+  min-height: 10%;
+}
+
+.dashboard_title{
+  font-size: 20px;
+  color: black;
+}
+
+.dashboard_title span{
+  font-size: 16px;
+  color: rgb(102, 101, 99);
 }

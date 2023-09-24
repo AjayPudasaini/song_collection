@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  Song Collection Dashboard
+{% endblock title %}
+{% block content %}
+  {% block modal %}
+  {% endblock modal %}
+  <div class="container-fluid">
+    <div class="row flex-nowrap">
+      <div class="col col-md-3 col-xl-2 px-sm-2 px-0 bg-white side_nav">
+        <div class="d-flex flex-column align-items-center align-items-sm-start px-1 pt-2 min-vh-100">
+          <a href="{% url "dashboard" %}"
+             class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-decoration-none">
+            <img src="{% static "images/cloco_logo.png" %}" alt="Your Logo" class="img-fluid mx-auto d-block" style="max-width: 150px;" />
+          </a>
+          <ul class="nav flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start mt-5"
+              id="menu">
+            <li class="nav-item">
+              <a href="{% url "dashboard" %}" class="nav-link px-0 align-middle">
+                <span class="{% if side_nav == "dashboard" %} active {% endif %}">
+                <ion-icon name="grid-outline"></ion-icon> <span class="ms-2 d-none d-sm-inline  ">Dashboard</span>
+              </span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url "dashboard_user_lists" %}"
+               class="nav-link px-0 align-middle">
+              <span class="{% if side_nav == "user" %} active {% endif %}">
+              <ion-icon name="person-outline"></ion-icon> <span class="ms-2 d-none d-sm-inline">User</span>
+            </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link px-0 align-middle">
+            <span class="{% if side_nav == "artist" %} active {% endif %}">
+            <ion-icon name="color-palette-outline"></ion-icon> <span class="ms-2 d-none d-sm-inline">Artist</span>
+          </span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link px-0 align-middle">
+          <span class="{% if side_nav == "music" %} active {% endif %}">
+          <ion-icon name="musical-notes-outline"></ion-icon> <span class="ms-1 d-none d-sm-inline">Music</span>
+        </span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href=" {% url "logout" %} " class="nav-link px-0 align-middle">
+        <span class="">
+        <ion-icon name="log-out-outline"></ion-icon> <span class="ms-1 d-none d-sm-inline">Logout</span>
+      </span>
+    </a>
+  </li>
+</ul>
+<hr />
+</div>
+</div>
+<div class="col bg-light p-0">
+  <div class="container-fluid dashboard_wrap">
+    <div class="dashboard_title p-3">
+      {% block dashboard_title %}
+      {% endblock dashboard_title %}
+    </div>
+  </div>
+  {% block dashboard_content %}
+  {% endblock dashboard_content %}
+</div>
+</div>
+</div>
+{% endblock content %}
