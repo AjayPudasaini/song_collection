@@ -1,8 +1,8 @@
 version: '3'
 
 volumes:
-  song_collection_local_postgres_data: {}
-  song_collection_local_postgres_data_backups: {}
+  song_collection_local_postgres_db_data: {}
+  song_collection_local_postgres_db_data_backups: {}
 
 services:
   django: &django
@@ -29,8 +29,8 @@ services:
     image: song_collection_production_postgres
     container_name: song_collection_local_postgres
     volumes:
-      - song_collection_local_postgres_data:/var/lib/postgresql/data
-      - song_collection_local_postgres_data_backups:/backups
+      - song_collection_local_postgres_db_data:/var/lib/postgresql/data
+      - song_collection_local_postgres_db_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
 
