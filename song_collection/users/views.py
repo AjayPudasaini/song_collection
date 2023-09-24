@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.hashers import check_password, make_password
 from django.db import connection
 from django.shortcuts import redirect, render
 from django.views.generic import View
@@ -75,11 +76,22 @@ class UserLoginView(View):
         if form.is_valid():
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
-            if email == "ajayapudasaini999@gmail.com" and password == "1530":
-                return redirect("dashboard")
+
+            with connection.cursor() as cursor:
+                query = """SELECT email, password FROM "User" WHERE email = %s"""
+                cursor.execute(query, [email])
+                user_data = cursor.fetchone()
+
+            if user_data:
+                user_id, hashed_password = user_data
+                if check_password(password, hashed_password):
+                    user = authenticate(request, email=email, password=password)
+                    if user is not None:
+                        login(request, user)
+                        return redirect("dashboard")
             else:
-                form.add_error("email", "Invalid email or password")
-                form.add_error("password", "Invalid email or password")
+                messages.info(request, "Invalid Email and password")
+
         context = {"form": form, "message": "Login"}
         return render(request, "users/auth/login.html", context)
 
