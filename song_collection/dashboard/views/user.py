@@ -2,21 +2,47 @@ from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import EmptyPage, Paginator
 from django.db import connection
 from django.shortcuts import redirect, render
 from django.views.generic import View
 
 from song_collection.dashboard.forms import UserUpdateForm
+from song_collection.users.forms import RegisterForm
+from song_collection.utils.utils import user_create
+
+
+class UserCreateView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            user_create(request, cleaned_data)
+            return redirect("dashboard_user_lists")
+        else:
+            return render(request, "dashboard/users/user_create.html", {"form": form})
+
+    def get(self, request, *args, **kwargs):
+        form = RegisterForm()
+        context = {"form": form}
+        return render(request, "dashboard/users/user_create.html", context)
 
 
 class UserListView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        page_number = request.GET.get("page", 1)
+        per_page = 5
         with connection.cursor() as cursor:
             query = """SELECT * FROM "User" """
             cursor.execute(query)
             user_data = [dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
+        paginator = Paginator(user_data, per_page)
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
         side_nav = "user"
-        context = {"side_nav": side_nav, "users": user_data}
+        context = {"side_nav": side_nav, "users": page}
         return render(request, "dashboard/users/user_list.html", context)
 
 

@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django import forms
@@ -37,3 +38,14 @@ class ArtistCreateUpdateForm(forms.Form):
     no_of_album_released = forms.IntegerField(
         widget=forms.NumberInput(attrs={"type": "number", "min": "0"}), label="No of album released"
     )
+
+
+class ArtistCSVImportForm(forms.Form):
+    file = forms.FileField(label="Select a file")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        file = cleaned_data.get("file")
+        file_extension = os.path.splitext(file.name)[1].lower()
+        if not file_extension == ".csv":
+            self.add_error("file", "File extension must be CSV.")

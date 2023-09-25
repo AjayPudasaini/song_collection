@@ -23,8 +23,17 @@
                 <button class="btn btn-outline-success" type="submit" disabled>Search</button>
               </form>
             </div>
-            <div class="add_new_user">
-              <a href="{% url "dashboard_artist_create" %}" class="btn btn-primary">Add Artist</a>
+            <div class="right d-flex flex-row gap-2">
+              <div class="add_new_user">
+                <a href="{% url "dashboard_artist_create" %}" class="btn btn-secondary">Add Artist</a>
+              </div>
+              <div class="add_new_user">
+                <a href="{% url "dashboard_artist_csv_import" %}"
+                   class="btn btn-success">Import Artist</a>
+              </div>
+              <div class="add_new_user">
+                <a href="{% url "dashboard_artist_csv_export" %}" class="btn btn-info">Export All Artist</a>
+              </div>
             </div>
           </div>
         </div>
@@ -71,6 +80,33 @@
                 {% endfor %}
               </tbody>
             </table>
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+                {% if artists.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ artists.previous_page_number }}"
+                       aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                {% endif %}
+                {% for page_num in artists.paginator.page_range %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                  </li>
+                {% endfor %}
+                {% if artists.has_next %}
+                  <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ artists.next_page_number }}"
+                       aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
           </div>
         </div>
       </div>
