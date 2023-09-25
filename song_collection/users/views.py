@@ -14,7 +14,7 @@ class UserRegisterView(View):
         form = RegisterForm(request.POST)
         if form.is_valid():
             cleaned_data = form.cleaned_data
-            user_create(request, cleaned_data)
+            user_create(request, cleaned_data, superuser=True, staff=True)
             return redirect("user_login")
         else:
             return render(request, "users/auth/register.html", {"form": form})

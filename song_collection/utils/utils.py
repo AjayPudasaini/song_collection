@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 from django.db import connection
 
 
-def user_create(request, cleaned_data):
+def user_create(request, cleaned_data, *args, **kwargs):
     first_name = cleaned_data.get("first_name")
     last_name = cleaned_data.get("last_name")
     email = cleaned_data.get("email")
@@ -14,8 +14,8 @@ def user_create(request, cleaned_data):
     gender = cleaned_data.get("gender")
     address = cleaned_data.get("address")
     password = make_password(cleaned_data.get("password"))
-    is_superuser = False
-    is_staff = False
+    is_superuser = kwargs.get("superuser", False)
+    is_staff = kwargs.get("staff", False)
     is_active = True
     current_date = datetime.now()
 
