@@ -3,8 +3,9 @@ import os
 
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django import forms
+from django.db import connection
 
-from song_collection.utils.constant import GENDER_CHOICES, YEAR_CHOICES
+from song_collection.utils.constant import GENDER_CHOICES, GENRE_CHOICES, YEAR_CHOICES
 
 
 class UserUpdateForm(forms.Form):
@@ -49,3 +50,21 @@ class ArtistCSVImportForm(forms.Form):
         file_extension = os.path.splitext(file.name)[1].lower()
         if not file_extension == ".csv":
             self.add_error("file", "File extension must be CSV.")
+
+
+class MusicCreateUpdateForm(forms.Form):
+    artist = forms.ChoiceField(choices=[])
+    title = forms.CharField(max_length=255)
+    album_name = forms.CharField(max_length=255)
+    genre = forms.ChoiceField(choices=GENRE_CHOICES, widget=forms.Select)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["artist"].choices = self.get_artist_choices()
+
+    def get_artist_choices(self):
+        with connection.cursor() as cursor:
+            query = """ SELECT id, name FROM "Artist" """
+            cursor.execute(query)
+            artist_data = cursor.fetchall()
+        return artist_data

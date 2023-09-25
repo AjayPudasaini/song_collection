@@ -25,14 +25,7 @@
             </div>
             <div class="right d-flex flex-row gap-2">
               <div class="add_new_user">
-                <a href="{% url "dashboard_artist_create" %}" class="btn btn-secondary">Add Artist</a>
-              </div>
-              <div class="add_new_user">
-                <a href="{% url "dashboard_artist_csv_import" %}"
-                   class="btn btn-success">Import Artist</a>
-              </div>
-              <div class="add_new_user">
-                <a href="{% url "dashboard_artist_csv_export" %}" class="btn btn-info">Export All Artist</a>
+                <a href="{% url "dashboard_music_create" %}" class="btn btn-secondary">Add Music</a>
               </div>
             </div>
           </div>
@@ -43,43 +36,34 @@
               <thead>
                 <tr>
                   <th scope="col">ID</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Date Of Birth</th>
-                  <th scope="col">Gender</th>
-                  <th scope="col">Address</th>
-                  <th scope="col">First Released Year</th>
-                  <th scope="col">No of album released</th>
+                  <th scope="col">artist</th>
+                  <th scope="col">title</th>
+                  <th scope="col">album_name</th>
+                  <th scope="col">genre</th>
                   <th scope="col">Created At</th>
                   <th scope="col">Updated At</th>
                   <th scope="col">Action</th>
-                  <th scope="col">Redirect</th>
                 </tr>
               </thead>
               <tbody>
-                {% for artist in artists %}
+                {% for song in songs %}
                   <tr>
-                    <td scope="row">{{ artist.id }}</td>
-                    <td>{{ artist.name }}</td>
-                    <td>{{ artist.date_of_birth }}</td>
-                    <td>{{ artist.gender }}</td>
-                    <td>{{ artist.address }}</td>
-                    <td>{{ artist.first_release_year }}</td>
-                    <td>{{ artist.no_of_album_released }}</td>
-                    <td>{{ artist.created_at }}</td>
-                    <td>{{ artist.updated_at }}</td>
+                    <td scope="row">{{ song.id }}</td>
+                    <td>{{ song.artist_id }}</td>
+                    <td>{{ song.title }}</td>
+                    <td>{{ song.album_name }}</td>
+                    <td>{{ song.genre }}</td>
+                    <td>{{ song.created_at }}</td>
+                    <td>{{ song.updated_at }}</td>
                     <td>
-                      <a href="{% url "dashboard_artist_update" artist.id %}"
+                      <a href="{% url "dashboard_music_update" song.id %}"
                          class="btn btn-secondary"><ion-icon name="create-outline"></ion-icon></a>
                       <button type="button"
                               class="btn btn-danger"
                               data-bs-toggle="modal"
-                              data-bs-target="#id_modal_{{ artist.id }}">
+                              data-bs-target="#id_modal_{{ song.id }}">
                         <ion-icon name="close-circle-outline"></ion-icon>
                       </button>
-                    </td>
-                    <td>
-                      <a href="{% url "dashboard_music_by_artist" artist.id %}"
-                         class="btn btn-secondary">My Songs</a>
                     </td>
                   </tr>
                 {% endfor %}
@@ -87,24 +71,24 @@
             </table>
             <nav aria-label="Page navigation example">
               <ul class="pagination">
-                {% if artists.has_previous %}
+                {% if songs.has_previous %}
                   <li class="page-item">
                     <a class="page-link"
-                       href="?page={{ artists.previous_page_number }}"
+                       href="?page={{ songs.previous_page_number }}"
                        aria-label="Previous">
                       <span aria-hidden="true">&laquo;</span>
                     </a>
                   </li>
                 {% endif %}
-                {% for page_num in artists.paginator.page_range %}
+                {% for page_num in songs.paginator.page_range %}
                   <li class="page-item">
                     <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
                   </li>
                 {% endfor %}
-                {% if artists.has_next %}
+                {% if songs.has_next %}
                   <li class="page-item">
                     <a class="page-link"
-                       href="?page={{ artists.next_page_number }}"
+                       href="?page={{ songs.next_page_number }}"
                        aria-label="Next">
                       <span aria-hidden="true">&raquo;</span>
                     </a>
@@ -118,25 +102,22 @@
     </div>
   </div>
   {% block modal %}
-    {% for artist in artists %}
+    {% for song in songs %}
       <div class="modal fade"
-           id="id_modal_{{ artist.id }}"
+           id="id_modal_{{ song.id }}"
            tabindex="-1"
            aria-labelledby="exampleModalLabel"
            aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">
-                Are you sure to delete {{ user.first_name }} {{ user.last_name }}?
-              </h5>
+              <h5 class="modal-title" id="exampleModalLongTitle">Are you sure to delete {{ song.title }}?</h5>
               <button type="button"
                       class="btn-close"
                       data-bs-dismiss="modal"
                       aria-label="Close"></button>
             </div>
-            <form action=" {% url "dashboard_artist_delete" artist.id %} "
-                  method="post">
+            <form action="{% url "dashboard_music_delete" song.id %}" method="post">
               {% csrf_token %}
               <div class="modal-footer">
                 <button type="submit" class="btn btn-danger">Delete</button>

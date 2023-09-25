@@ -2,7 +2,6 @@ from datetime import datetime
 
 import pandas as pd
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import EmptyPage, Paginator
 from django.db import connection
 from django.http import HttpResponse
@@ -10,9 +9,10 @@ from django.shortcuts import redirect, render
 from django.views.generic import View
 
 from song_collection.dashboard.forms import ArtistCreateUpdateForm, ArtistCSVImportForm
+from song_collection.utils.mixin import SuperuserRequiredMixin
 
 
-class ArtisrListView(LoginRequiredMixin, View):
+class ArtisrListView(SuperuserRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         page_number = request.GET.get("page", 1)
         per_page = 5
@@ -34,7 +34,7 @@ class ArtisrListView(LoginRequiredMixin, View):
         return render(request, "dashboard/artist/artist_list.html", context)
 
 
-class ArtistCreateView(LoginRequiredMixin, View):
+class ArtistCreateView(SuperuserRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         form = ArtistCreateUpdateForm(request.POST)
         if form.is_valid():
@@ -78,7 +78,7 @@ class ArtistCreateView(LoginRequiredMixin, View):
         return render(request, "dashboard/artist/artist_create_update.html", context)
 
 
-class ArtistUpdateView(LoginRequiredMixin, View):
+class ArtistUpdateView(SuperuserRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         form = ArtistCreateUpdateForm(request.POST)
         if form.is_valid():
@@ -150,7 +150,7 @@ class ArtistUpdateView(LoginRequiredMixin, View):
         return render(request, "dashboard/artist/artist_create_update.html", context)
 
 
-class ArtistDeleteView(View):
+class ArtistDeleteView(SuperuserRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         try:
             with connection.cursor() as cursor:
@@ -163,7 +163,7 @@ class ArtistDeleteView(View):
             return redirect("dashboard_artist_lists")
 
 
-class ArtistCSVImportView(LoginRequiredMixin, View):
+class ArtistCSVImportView(SuperuserRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         form = ArtistCSVImportForm(request.POST, request.FILES)
         if form.is_valid():
@@ -233,7 +233,7 @@ class ArtistCSVImportView(LoginRequiredMixin, View):
         return render(request, "dashboard/artist/artist_import.html", context)
 
 
-class ArtistCSVExportView(LoginRequiredMixin, View):
+class ArtistCSVExportView(SuperuserRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         query = """
             SELECT id, name, date_of_birth, gender, address, first_release_year, no_of_album_released, created_at, updated_at

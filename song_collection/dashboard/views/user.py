@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import EmptyPage, Paginator
 from django.db import connection
 from django.shortcuts import redirect, render
@@ -9,10 +8,11 @@ from django.views.generic import View
 
 from song_collection.dashboard.forms import UserUpdateForm
 from song_collection.users.forms import RegisterForm
+from song_collection.utils.mixin import SuperuserRequiredMixin
 from song_collection.utils.utils import user_create
 
 
-class UserCreateView(LoginRequiredMixin, View):
+class UserCreateView(SuperuserRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -28,7 +28,7 @@ class UserCreateView(LoginRequiredMixin, View):
         return render(request, "dashboard/users/user_create.html", context)
 
 
-class UserListView(LoginRequiredMixin, View):
+class UserListView(SuperuserRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         page_number = request.GET.get("page", 1)
         per_page = 5
@@ -46,7 +46,7 @@ class UserListView(LoginRequiredMixin, View):
         return render(request, "dashboard/users/user_list.html", context)
 
 
-class UserUpdateView(LoginRequiredMixin, View):
+class UserUpdateView(SuperuserRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         form = UserUpdateForm(request.POST)
         if form.is_valid():
@@ -119,7 +119,7 @@ class UserUpdateView(LoginRequiredMixin, View):
         return render(request, "dashboard/users/user_update.html", context)
 
 
-class UserDeleteView(View):
+class UserDeleteView(SuperuserRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         try:
             with connection.cursor() as cursor:

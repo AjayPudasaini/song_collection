@@ -33,7 +33,7 @@ class UserLoginView(View):
             password = form.cleaned_data.get("password")
 
             with connection.cursor() as cursor:
-                query = """SELECT email, password FROM "User" WHERE email = %s"""
+                query = """SELECT email, password FROM "User" WHERE email = %s AND is_superuser=True """
                 cursor.execute(query, [email])
                 user_data = cursor.fetchone()
 
@@ -51,6 +51,8 @@ class UserLoginView(View):
         return render(request, "users/auth/login.html", context)
 
     def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("dashboard")
         form = LoginForm()
         context = {"form": form, "message": "Login"}
         return render(request, "users/auth/login.html", context)
