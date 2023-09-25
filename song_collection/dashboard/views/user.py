@@ -9,13 +9,6 @@ from django.views.generic import View
 from song_collection.dashboard.forms import UserUpdateForm
 
 
-class DashboardView(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        side_nav = "dashboard"
-        context = {"side_nav": side_nav}
-        return render(request, "dashboard/dashboard.html", context)
-
-
 class UserListView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         with connection.cursor() as cursor:
