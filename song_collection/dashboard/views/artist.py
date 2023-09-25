@@ -1,22 +1,36 @@
 from datetime import datetime
 
+import pandas as pd
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import EmptyPage, Paginator
 from django.db import connection
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.generic import View
 
-from song_collection.dashboard.forms import ArtistCreateUpdateForm
+from song_collection.dashboard.forms import ArtistCreateUpdateForm, ArtistCSVImportForm
 
 
 class ArtisrListView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        page_number = request.GET.get("page", 1)
+        per_page = 5
+
         with connection.cursor() as cursor:
             query = """SELECT * FROM "Artist" """
             cursor.execute(query)
             artist_data = [dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
+
+        paginator = Paginator(artist_data, per_page)
+
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+
         side_nav = "artist"
-        context = {"side_nav": side_nav, "artists": artist_data}
+        context = {"side_nav": side_nav, "artists": page}
         return render(request, "dashboard/artist/artist_list.html", context)
 
 
@@ -147,3 +161,101 @@ class ArtistDeleteView(View):
         except Exception as e:
             messages.info(request, f"Artist deletion Failed! {e}")
             return redirect("dashboard_artist_lists")
+
+
+class ArtistCSVImportView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        form = ArtistCSVImportForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.cleaned_data.get("file")
+            df = pd.read_csv(file, dtype=str)
+            if df.isnull().values.any():
+                form.add_error("file", "All CSV fields are required")
+                side_nav = "artist"
+                context = {"side_nav": side_nav, "form": form}
+                return render(request, "dashboard/artist/artist_import.html", context)
+            data_to_insert = []
+            for ind in df.index:
+                id = df.get("id")[ind]
+                name = df.get("name")[ind]
+                date_of_birth = df.get("date_of_birth")[ind]
+                gender = df.get("gender")[ind]
+                address = df.get("address")[ind]
+                first_release_year = df.get("first_release_year")[ind]
+                no_of_album_released = df.get("no_of_album_released")[ind]
+                current_date = datetime.now()
+
+                with connection.cursor() as cursor:
+                    query = """SELECT id FROM "Artist" WHERE id = %s"""
+                    cursor.execute(query, [str(id)])
+                    artist_data = cursor.fetchone()
+                if artist_data:
+                    messages.info(request, "CSV import is for adding new data only, updates are not supported.")
+                    side_nav = "artist"
+                    context = {"side_nav": side_nav, "form": form}
+                    return render(request, "dashboard/artist/artist_import.html", context)
+
+                data_to_insert.append(
+                    [
+                        name,
+                        date_of_birth,
+                        gender,
+                        address,
+                        first_release_year,
+                        no_of_album_released,
+                        current_date,
+                        current_date,
+                    ]
+                )
+
+            if data_to_insert:
+                insert_query = """
+                        INSERT INTO "Artist" (name, date_of_birth, gender, address, first_release_year, no_of_album_released, created_at, updated_at)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    """
+
+                with connection.cursor() as cursor:
+                    for i in data_to_insert:
+                        cursor.execute(insert_query, i)
+
+                messages.success(request, "CSV Imported Success")
+            return redirect("dashboard_artist_lists")
+        else:
+            messages.info(request, "CSV Import failed.")
+            side_nav = "artist"
+            context = {"side_nav": side_nav, "form": form}
+            return render(request, "dashboard/artist/artist_import.html", context)
+
+    def get(self, request, *args, **kwargs):
+        form = ArtistCSVImportForm()
+        side_nav = "artist"
+        context = {"side_nav": side_nav, "form": form}
+        return render(request, "dashboard/artist/artist_import.html", context)
+
+
+class ArtistCSVExportView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        query = """
+            SELECT id, name, date_of_birth, gender, address, first_release_year, no_of_album_released, created_at, updated_at
+            FROM "Artist"
+            """
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            data = cursor.fetchall()
+
+        columns = [
+            "id",
+            "name",
+            "date_of_birth",
+            "gender",
+            "address",
+            "first_release_year",
+            "no_of_album_released",
+            "created_at",
+            "updated_at",
+        ]
+        df = pd.DataFrame(data, columns=columns)
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="artists.csv"'
+        df.to_csv(response, index=False)
+        return response

@@ -1,6 +1,7 @@
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django import forms
 from django.core.validators import RegexValidator
+from django.db import connection
 
 from song_collection.utils.constant import GENDER_CHOICES
 
@@ -37,6 +38,18 @@ class RegisterForm(forms.Form):
             self.add_error("confirm_password", "Passwords do not match.")
 
         return cleaned_data
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        with connection.cursor() as cursor:
+            query = """ SELECT COUNT(*) FROM "User" WHERE email = %s """
+            cursor.execute(query, [email])
+            email_count = cursor.fetchone()[0]
+
+        if email_count > 0:
+            self.add_error("email", "This email is already registered.")
+
+        return email
 
 
 class LoginForm(forms.Form):
