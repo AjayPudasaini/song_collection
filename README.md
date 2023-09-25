@@ -15,6 +15,3 @@ A Simple Admin panel to manage records of artists with their songs collection
     - sudo docker compose -f local.yml run --rm django python manage.py createsuperuser
     * up container
     - sudo docker compose -f local.yml up
-
-
-
