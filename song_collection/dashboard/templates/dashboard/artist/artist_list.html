@@ -1,0 +1,109 @@
+{% extends "dashboard/base.html" %}
+
+{% load static %}
+
+{% block dashboard_title %}
+  Artist
+  <br />
+  <span>Listing the artist</span>
+{% endblock dashboard_title %}
+{% block dashboard_content %}
+  <div class="container-fluid p-4 mt-3">
+    <div class="user_lists">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between">
+            <div class="search">
+              <form class="d-flex" role="search">
+                <input class="form-control me-2"
+                       type="search"
+                       placeholder="Search"
+                       aria-label="Search"
+                       disabled />
+                <button class="btn btn-outline-success" type="submit" disabled>Search</button>
+              </form>
+            </div>
+            <div class="add_new_user">
+              <a href="{% url "dashboard_artist_create" %}" class="btn btn-primary">Add Artist</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-3">
+          <div class="table-responsive mt-3">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Date Of Birth</th>
+                  <th scope="col">Gender</th>
+                  <th scope="col">Address</th>
+                  <th scope="col">First Released Year</th>
+                  <th scope="col">No of album released</th>
+                  <th scope="col">Created At</th>
+                  <th scope="col">Updated At</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for artist in artists %}
+                  <tr>
+                    <td scope="row">{{ artist.id }}</td>
+                    <td>{{ artist.name }}</td>
+                    <td>{{ artist.date_of_birth }}</td>
+                    <td>{{ artist.gender }}</td>
+                    <td>{{ artist.address }}</td>
+                    <td>{{ artist.first_release_year }}</td>
+                    <td>{{ artist.no_of_album_released }}</td>
+                    <td>{{ artist.created_at }}</td>
+                    <td>{{ artist.updated_at }}</td>
+                    <td>
+                      <a href="{% url "dashboard_artist_update" artist.id %}"
+                         class="btn btn-secondary"><ion-icon name="create-outline"></ion-icon></a>
+                      <button type="button"
+                              class="btn btn-danger"
+                              data-bs-toggle="modal"
+                              data-bs-target="#id_modal_{{ artist.id }}">
+                        <ion-icon name="close-circle-outline"></ion-icon>
+                      </button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% block modal %}
+    {% for artist in artists %}
+      <div class="modal fade"
+           id="id_modal_{{ artist.id }}"
+           tabindex="-1"
+           aria-labelledby="exampleModalLabel"
+           aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">
+                Are you sure to delete {{ user.first_name }} {{ user.last_name }}?
+              </h5>
+              <button type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"></button>
+            </div>
+            <form action=" {% url "dashboard_artist_delete" artist.id %} "
+                  method="post">
+              {% csrf_token %}
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% endblock modal %}
+{% endblock dashboard_content %}

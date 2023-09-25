@@ -34,7 +34,8 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link px-0 align-middle">
+          <a href="{% url "dashboard_artist_lists" %}"
+             class="nav-link px-0 align-middle">
             <span class="{% if side_nav == "artist" %} active {% endif %}">
             <ion-icon name="color-palette-outline"></ion-icon> <span class="ms-2 d-none d-sm-inline">Artist</span>
           </span>
@@ -64,6 +65,13 @@
       {% block dashboard_title %}
       {% endblock dashboard_title %}
     </div>
+  </div>
+  <div class="container py-2">
+    {% if messages %}
+      <div class="alert alert-secondary" role="alert">
+        {% for message in messages %}{{ message }}{% endfor %}
+      </div>
+    {% endif %}
   </div>
   {% block dashboard_content %}
   {% endblock dashboard_content %}
