@@ -10,7 +10,7 @@ A Simple Admin panel to manage records of artists with their songs collection
     * switch branch
     - git checkout develop
     * build
-    - sudo docker compose -f local.yml --build
+    - sudo docker compose -f local.yml build
     * create superuser
     - sudo docker compose -f local.yml run --rm django python manage.py createsuperuser
     * up container
